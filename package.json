@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nilesh-g/express-login-ui.git"
+    "url": "git+https://github.com/sangram2121/express-login-ui.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nilesh-g/express-login-ui/issues"
+    "url": "https://github.com/sangram2121/express-login-ui/issues"
   },
-  "homepage": "https://github.com/nilesh-g/express-login-ui#readme",
+  "homepage": "https://github.com/sangram2121/express-login-ui#readme",
   "dependencies": {
     "chromedriver": "^148.0.4",
     "express": "^5.2.1",
