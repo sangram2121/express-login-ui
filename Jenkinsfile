@@ -22,15 +22,15 @@ pipeline {
                 url: 'https://github.com/sangram2121/express-login-ui'
             }
         }
+        
         stage('Check Docker') {
             steps {
                sh '''
                 echo "Checking Docker"
-
                 which docker
                 docker --version
-                 docker ps
-                 '''
+                docker ps
+                '''
              }
           }
 
@@ -38,29 +38,27 @@ pipeline {
             steps {
                 sh '''
                     echo "Cleaning old container and image"
-
                     docker rm -f $APP_NAME || true
                     docker rmi $IMAGE_NAME || true
                 '''
             }
         }
 
+        // --- UPDATED STAGE ---
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    echo "Building Docker Image"
-
-                    /usr/local/bin/docker build -t $IMAGE_NAME .
+                    echo "Building Docker Image with Explicit Platform"
+                    # Forcing linux/amd64 fixes the "does not provide any platform" error on push
+                    /usr/local/bin/docker build --platform linux/amd64 -t $IMAGE_NAME .
                 '''
             }
         }
 
         stage('Docker Login') {
-
             environment {
                 DOCKER_CREDS = credentials('DockerHubCreds')
             }
-
             steps {
                 sh '''
                     echo "$DOCKER_CREDS_PSW" | docker login -u "$DOCKER_CREDS_USR" --password-stdin
@@ -72,7 +70,6 @@ pipeline {
             steps {
                 sh '''
                     echo "Pushing Docker Image"
-
                     docker push $IMAGE_NAME
                 '''
             }
@@ -82,7 +79,6 @@ pipeline {
             steps {
                 sh '''
                     echo "Running Container"
-
                     docker run -d \
                     --name $APP_NAME \
                     -p $HOST_PORT:$CONTAINER_PORT \
@@ -95,11 +91,8 @@ pipeline {
             steps {
                 sh '''
                     echo "Testing Application"
-
                     sleep 10
-
                     curl -f http://localhost:$HOST_PORT/hello
-
                     echo "Application Deployed Successfully"
                 '''
             }
@@ -107,15 +100,12 @@ pipeline {
     }
 
     post {
-
         success {
             echo 'Pipeline executed successfully!'
         }
-
         failure {
             echo 'Pipeline failed!'
         }
-
         always {
             echo 'Pipeline execution completed.'
         }
