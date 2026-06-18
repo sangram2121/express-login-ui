@@ -11,6 +11,7 @@ pipeline {
         IMAGE_NAME     = "sangram5424/express-login-ui"
         CONTAINER_PORT = "3000"
         HOST_PORT      = "3000"
+        PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:${env.PATH}"
     }
 
     stages {
@@ -21,6 +22,17 @@ pipeline {
                 url: 'https://github.com/sangram2121/express-login-ui'
             }
         }
+        stage('Check Docker') {
+            steps {
+               sh '''
+                echo "Checking Docker"
+
+                which docker
+                docker --version
+                 docker ps
+                 '''
+             }
+          }
 
         stage('Cleanup Old Container & Image') {
             steps {
@@ -38,7 +50,7 @@ pipeline {
                 sh '''
                     echo "Building Docker Image"
 
-                    docker build -t $IMAGE_NAME .
+                    /usr/local/bin/docker build -t $IMAGE_NAME .
                 '''
             }
         }
